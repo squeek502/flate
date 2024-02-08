@@ -7,3 +7,4 @@ tmp
 /bench_data/
 /bin/bench_data/
 /zig-out-*
+test/outputs
