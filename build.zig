@@ -89,6 +89,13 @@ pub fn build(b: *std.Build) void {
     _ = addFuzzer(b, "fuzz_roundtrip", &.{}, flate_module, target);
     _ = addFuzzer(b, "fuzz_roundtrip_store", &.{}, flate_module, target);
     _ = addFuzzer(b, "fuzz_roundtrip_huffman", &.{}, flate_module, target);
+
+    const deflate_puff = addFuzzer(b, "fuzz_puff", &.{}, flate_module, target);
+    for (&[_]*std.Build.Step.Compile{ deflate_puff.lib, deflate_puff.debug_exe }) |compile| {
+        compile.addIncludePath(.{ .path = "test/puff" });
+        compile.addCSourceFile(.{ .file = .{ .path = "test/puff/puff.c" } });
+        compile.linkLibC();
+    }
 }
 
 const Binary = struct {
