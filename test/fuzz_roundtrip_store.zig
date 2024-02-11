@@ -15,20 +15,13 @@ pub fn zigMain() !void {
     const data = try stdin.readToEndAlloc(allocator, std.math.maxInt(usize));
     defer allocator.free(data);
 
-    var fbs = std.io.fixedBufferStream(data);
-    const reader = fbs.reader();
-
-    // Choose a pseudo-random level using the hash of the data
-    const hash = std.hash.Wyhash.hash(0, data);
-    const levels = [_]flate.raw.Level{ .level_4, .level_5, .level_6, .level_7, .level_8, .level_9 };
-    const level_index: usize = @intCast(hash % levels.len);
-    const level = levels[level_index];
-    std.debug.print("{}\n", .{level});
-
     // Compress the data
+    var fbs = std.io.fixedBufferStream(data);
     var buf = std.ArrayList(u8).init(allocator);
     defer buf.deinit();
-    try flate.raw.compress(reader, buf.writer(), level);
+    var cmp = try flate.raw.storeCompressor(buf.writer());
+    try cmp.compress(fbs.reader());
+    try cmp.close();
 
     // Now try to decompress it
     var buf_fbs = std.io.fixedBufferStream(buf.items);

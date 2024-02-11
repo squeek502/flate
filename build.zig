@@ -87,6 +87,8 @@ pub fn build(b: *std.Build) void {
 
     _ = addFuzzer(b, "fuzz_decompress", &.{}, flate_module, target);
     _ = addFuzzer(b, "fuzz_roundtrip", &.{}, flate_module, target);
+    _ = addFuzzer(b, "fuzz_roundtrip_store", &.{}, flate_module, target);
+    _ = addFuzzer(b, "fuzz_roundtrip_huffman", &.{}, flate_module, target);
 }
 
 const Binary = struct {
